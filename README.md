@@ -74,6 +74,31 @@ Para acompanhar os testes no navegador:
 npm run test:headed
 ```
 
+## Testes de ações básicas
+
+O arquivo `tests/acoes.spec.ts` contém quatro testes realizados no Moodle Aponti Academy:
+
+1. **Click:** clica no link `Perdeu a senha?` e valida a mudança de página;
+2. **Fill:** preenche os campos de CPF e senha e valida os valores informados;
+3. **Submit:** envia o formulário com dados inválidos e valida a mensagem de erro;
+4. **Download:** baixa o edital disponível na página inicial e valida se o arquivo foi recebido.
+
+Execute somente esses testes com:
+
+```bash
+npx playwright test tests/acoes.spec.ts --project=chromium
+```
+
+### Evidência da execução
+
+O Playwright gera um relatório HTML com o resultado dos testes. No teste de download, o edital baixado também é anexado ao relatório como evidência.
+
+Para abrir o relatório após a execução:
+
+```bash
+npm run report
+```
+
 ## Mapa de localizadores do Moodle
 
 O arquivo [`MAPA_DE_LOCALIZADORES_MOODLE.md`](./MAPA_DE_LOCALIZADORES_MOODLE.md) apresenta seis elementos da página de login do Moodle Aponti Academy.
