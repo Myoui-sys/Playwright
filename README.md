@@ -1,30 +1,90 @@
 # Testes automatizados com Playwright
 
-Suíte E2E com cinco cenários para a aplicação pública [SauceDemo](https://www.saucedemo.com/):
+Este projeto contém cinco testes automatizados da aplicação [SauceDemo](https://www.saucedemo.com/), desenvolvidos com Playwright e TypeScript.
 
-1. Login com usuário válido;
-2. Validação de credenciais inválidas;
-3. Navegação entre catálogo e detalhes de produto;
-4. Ordenação dos produtos por preço;
-5. Fluxo completo de carrinho e checkout.
+## Casos de teste e validações
 
-## Organização
+### 1. Login com credenciais válidas
 
-- `tests/pages`: Page Objects com as interações reutilizáveis;
-- `tests/fixtures`: criação das páginas e pré-condição de usuário autenticado;
-- `tests/data`: usuários, produtos e dados de checkout centralizados;
-- `tests/loja.spec.ts`: cenários de negócio concisos, sem duplicar detalhes de interface.
+- Preenche o usuário e a senha;
+- Clica no botão de login;
+- Valida se o usuário foi direcionado para a página de produtos;
+- Valida se o texto `Products` está visível.
 
-## Execução
+### 2. Login com credenciais inválidas
+
+- Preenche um usuário e uma senha inválidos;
+- Clica no botão de login;
+- Valida se a mensagem de erro é exibida;
+- Valida se o usuário continua na página de login.
+
+### 3. Navegação para os detalhes do produto
+
+- Realiza o login;
+- Acessa os detalhes da mochila `Sauce Labs Backpack`;
+- Valida se o nome do produto está visível;
+- Retorna para o catálogo e valida se a página de produtos foi exibida.
+
+### 4. Ordenação dos produtos por preço
+
+- Realiza o login;
+- Seleciona a opção de menor para maior preço;
+- Obtém os preços apresentados na tela;
+- Valida se os preços estão na ordem correta.
+
+### 5. Carrinho e finalização da compra
+
+- Realiza o login;
+- Adiciona dois produtos ao carrinho;
+- Valida se o carrinho contém dois itens;
+- Valida se os produtos escolhidos aparecem no carrinho;
+- Preenche os dados do cliente;
+- Valida se o valor total é exibido;
+- Finaliza a compra e valida a mensagem de sucesso.
+
+As validações são feitas com o comando `expect` do Playwright. Ele compara o resultado encontrado na aplicação com o resultado esperado pelo teste.
+
+## Reutilização de código
+
+O arquivo `tests/loja.spec.ts` possui duas funções reutilizáveis:
+
+- `login`: realiza o acesso à aplicação;
+- `adicionarProdutoAoCarrinho`: adiciona um produto usando seu nome.
+
+Essas funções evitam repetir os mesmos comandos em vários testes.
+
+## Como executar
+
+Instale as dependências e os navegadores:
 
 ```bash
 npm install
 npx playwright install
+```
+
+Execute os testes:
+
+```bash
 npm test
 ```
 
-Para acompanhar a execução no navegador, use `npm run test:headed`. O relatório HTML é gerado em `playwright-report` e pode ser aberto com `npm run report`.
+Para acompanhar os testes no navegador:
 
-Por padrão, os testes usam `https://www.saucedemo.com`. Para outro ambiente, defina `BASE_URL` antes da execução.
+```bash
+npm run test:headed
+```
 
-Se o download dos navegadores não estiver disponível, é possível executar o projeto Chromium com uma instalação local do Google Chrome definindo `PLAYWRIGHT_USE_SYSTEM_CHROME=1`.
+## Mapa de localizadores do Moodle
+
+O arquivo [`MAPA_DE_LOCALIZADORES_MOODLE.md`](./MAPA_DE_LOCALIZADORES_MOODLE.md) apresenta seis elementos da página de login do Moodle Aponti Academy.
+
+Para cada elemento, o documento informa:
+
+- Seletor CSS;
+- Localização por texto;
+- Localização por role;
+- Disponibilidade de test-id;
+- Localizador escolhido para o teste;
+- Justificativa da escolha.
+
+Os elementos foram verificados diretamente no HTML da página em 16/10/2026.
