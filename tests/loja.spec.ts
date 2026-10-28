@@ -1,4 +1,5 @@
 import { expect, Page, test } from '@playwright/test';
+import { LoginPage } from '../pages/loginpage';
 
 // Função reutilizável para evitar repetir o login em vários testes.
 async function login(page: Page, usuario: string, senha: string) {
