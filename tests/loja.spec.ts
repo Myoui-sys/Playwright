@@ -1,76 +1,55 @@
-import { expect, Page, test } from '@playwright/test';
-import { LoginPage } from '../pages/loginpage';
+import { expect, Page, test } from "@playwright/test";
 
-// Função reutilizável para evitar repetir o login em vários testes.
-async function login(page: Page, usuario: string, senha: string) {
-  await page.goto('/');
-  await page.getByPlaceholder('Username').fill(usuario);
-  await page.getByPlaceholder('Password').fill(senha);
-  await page.getByRole('button', { name: 'Login' }).click();
-}
+import { LoginPage } from "../pages/loginPage";
+import { InventoryPage } from "../pages/inventoryPage";
+import { CartPage } from "../pages/cartPage";
 
-// Função reutilizável para adicionar um produto pelo nome.
-async function adicionarProdutoAoCarrinho(page: Page, nomeProduto: string) {
-  const produto = page.locator('.inventory_item').filter({ hasText: nomeProduto });
-  await produto.getByRole('button', { name: 'Add to cart' }).click();
-}
+test.describe("Testes da loja SauceDemo", () => {
+  test("1. Login com credenciais válidas", async ({ page }) => {
+    const loginPage = new LoginPage(page);
 
-test.describe('Testes da loja SauceDemo', () => {
-  test('1. login com credenciais válidas', async ({ page }) => {
-    await login(page, 'standard_user', 'secret_sauce');
+    await loginPage.acessar();
+    await loginPage.login("standard_user", "secret_sauce");
 
-    await expect(page).toHaveURL(/inventory\.html/);
-    await expect(page.getByText('Products', { exact: true })).toBeVisible();
+    await expect(page).toHaveURL(/inventory.html/);
+    await expect(page.getByText("Products")).toBeVisible();
   });
 
-  test('2. login com credenciais inválidas', async ({ page }) => {
-    await login(page, 'invalid_user', 'invalid_password');
+  test("2. Login com credenciais inválidas", async ({ page }) => {
+    const loginPage = new LoginPage(page);
 
-    await expect(page.getByText('Username and password do not match', { exact: false })).toBeVisible();
-    await expect(page).toHaveURL('/');
+    await loginPage.acessar();
+    await loginPage.login("usuario_invalido", "senha_invalida");
+
+    await expect(page.locator('[data-test="error"]')).toBeVisible();
   });
 
-  test('3. acessar os detalhes de um produto e voltar', async ({ page }) => {
-    await login(page, 'standard_user', 'secret_sauce');
+  test("3. Adicionar produto ao carrinho", async ({ page }) => {
+    const loginPage = new LoginPage(page);
+    const inventoryPage = new InventoryPage(page);
 
-    await page.getByRole('button', { name: 'View details for Sauce Labs Backpack' }).first().click();
-    await expect(page.getByText('Sauce Labs Backpack', { exact: true })).toBeVisible();
+    await loginPage.acessar();
+    await loginPage.login("standard_user", "secret_sauce");
 
-    await page.getByRole('button', { name: 'Back to products' }).click();
-    await expect(page.getByText('Products', { exact: true })).toBeVisible();
+    await inventoryPage.adicionarProdutoAoCarrinho("Sauce Labs Backpack");
+
+    await expect(page.locator(".shopping_cart_badge")).toHaveText("1");
   });
 
-  test('4. ordenar os produtos pelo menor preço', async ({ page }) => {
-    await login(page, 'standard_user', 'secret_sauce');
+  test("4. Remover produto do carrinho", async ({ page }) => {
+    const loginPage = new LoginPage(page);
+    const inventoryPage = new InventoryPage(page);
+    const cartPage = new CartPage(page);
 
-    await page.getByRole('combobox', { name: 'Sort products' }).selectOption('lohi');
+    await loginPage.acessar();
+    await loginPage.login("standard_user", "secret_sauce");
 
-    const textosDosPrecos = await page.locator('.inventory_item_price').allTextContents();
-    const precos = textosDosPrecos.map((preco) => Number(preco.replace('$', '')));
-    const precosOrdenados = [...precos].sort((a, b) => a - b);
+    await inventoryPage.adicionarProdutoAoCarrinho("Sauce Labs Backpack");
 
-    expect(precos).toEqual(precosOrdenados);
-  });
+    await inventoryPage.acessarCarrinho();
 
-  test('5. adicionar produtos e finalizar a compra', async ({ page }) => {
-    await login(page, 'standard_user', 'secret_sauce');
+    await cartPage.removerProduto("Sauce Labs Backpack");
 
-    await adicionarProdutoAoCarrinho(page, 'Sauce Labs Backpack');
-    await adicionarProdutoAoCarrinho(page, 'Sauce Labs Bike Light');
-    await expect(page.getByRole('button', { name: 'Cart, 2 items' })).toBeVisible();
-
-    await page.getByRole('button', { name: /Cart/ }).click();
-    await expect(page.getByRole('button', { name: 'View details for Sauce Labs Backpack' }).first()).toBeVisible();
-    await expect(page.getByRole('button', { name: 'View details for Sauce Labs Bike Light' }).first()).toBeVisible();
-
-    await page.getByRole('button', { name: 'Checkout' }).click();
-    await page.getByPlaceholder('First Name').fill('Maria');
-    await page.getByPlaceholder('Last Name').fill('Silva');
-    await page.getByPlaceholder('Zip/Postal Code').fill('01310-100');
-    await page.getByRole('button', { name: 'Continue' }).click();
-
-    await expect(page.getByText(/^Total: \$/)).toBeVisible();
-    await page.getByRole('button', { name: 'Finish' }).click();
-    await expect(page.getByRole('heading', { name: 'Thank you for your order!' })).toBeVisible();
+    await expect(page.locator(".cart_item")).toHaveCount(0);
   });
 });

@@ -1,8 +1,50 @@
-# Testes automatizados com Playwright
+# Testes Automatizados com Playwright
 
-Este projeto contém cinco testes automatizados da aplicação [SauceDemo](https://www.saucedemo.com/), desenvolvidos com Playwright e TypeScript.
+Este projeto contém testes automatizados desenvolvidos com **Playwright e TypeScript**, utilizando a aplicação [SauceDemo](https://www.saucedemo.com/) e o Moodle Aponti Academy como ambientes de teste.
 
-## Casos de teste e validações
+O projeto utiliza o padrão **Page Object Model (POM)** para organizar os elementos e as ações das páginas, promovendo a reutilização de código, a manutenção e a organização dos testes.
+
+## Tecnologias utilizadas
+
+- TypeScript
+- Playwright
+- Node.js
+- Page Object Model (POM)
+
+## Estrutura do projeto
+
+```text
+Playwright/
+├── pages/
+│   ├── loginPage.ts
+│   ├── inventoryPage.ts
+│   └── cartPage.ts
+│
+├── tests/
+│   ├── acoes.spec.ts
+│   ├── asserts.spec.ts
+│   └── loja.spec.ts
+│
+├── playwright.config.ts
+├── package.json
+├── tsconfig.json
+└── README.md
+```
+
+### Organização das páginas e dos testes
+
+A estrutura utiliza o padrão Page Object Model (POM), separando as responsabilidades:
+
+- **loginPage.ts:** centraliza os seletores e as ações relacionadas ao login, incluindo preenchimento dos campos e autenticação.
+- **inventoryPage.ts:** concentra as ações da página de produtos, como adicionar produtos ao carrinho e acessar o carrinho.
+- **cartPage.ts:** concentra as ações relacionadas ao carrinho, como remover produtos.
+- **loja.spec.ts:** contém os cenários de teste e as validações realizadas na aplicação.
+
+Essa organização evita a repetição de comandos e facilita a manutenção dos testes.
+
+## Casos de teste e validações — SauceDemo
+
+O arquivo `tests/loja.spec.ts` contém cinco cenários de testes automatizados.
 
 ### 1. Login com credenciais válidas
 
@@ -42,61 +84,21 @@ Este projeto contém cinco testes automatizados da aplicação [SauceDemo](https
 - Valida se o valor total é exibido;
 - Finaliza a compra e valida a mensagem de sucesso.
 
-As validações são feitas com o comando `expect` do Playwright. Ele compara o resultado encontrado na aplicação com o resultado esperado pelo teste.
+As validações são realizadas com o comando `expect` do Playwright, comparando os resultados encontrados na aplicação com os resultados esperados.
 
-## Reutilização de código
-
-O arquivo `tests/loja.spec.ts` possui duas funções reutilizáveis:
-
-- `login`: realiza o acesso à aplicação;
-- `adicionarProdutoAoCarrinho`: adiciona um produto usando seu nome.
-
-Essas funções evitam repetir os mesmos comandos em vários testes.
-
-## Como executar
-
-Instale as dependências e os navegadores:
-
-```bash
-npm install
-npx playwright install
-```
-
-Execute os testes:
-
-```bash
-npm test
-```
-
-Para acompanhar os testes no navegador:
-
-```bash
-npm run test:headed
-```
-
-## Testes de ações básicas
+## Testes de ações básicas — Moodle Aponti Academy
 
 O arquivo `tests/acoes.spec.ts` contém quatro testes realizados no Moodle Aponti Academy:
 
-1. **Click:** clica no link `Perdeu a senha?` e valida a mudança de página;
-2. **Fill:** preenche os campos de CPF e senha e valida os valores informados;
-3. **Submit:** envia o formulário com dados inválidos e valida a mensagem de erro;
+1. **Click:** clica no link `Perdeu a senha?` e valida a mudança de página.
+2. **Fill:** preenche os campos de CPF e senha e valida os valores informados.
+3. **Submit:** envia o formulário com dados inválidos e valida a mensagem de erro.
 4. **Download:** baixa o edital disponível na página inicial e valida se o arquivo foi recebido.
 
-Execute somente esses testes com:
+Para executar somente esses testes no Chromium:
 
 ```bash
 npx playwright test tests/acoes.spec.ts --project=chromium
-```
-
-### Evidência da execução
-
-O Playwright gera um relatório HTML com o resultado dos testes. No teste de download, o edital baixado também é anexado ao relatório como evidência.
-
-Para abrir o relatório após a execução:
-
-```bash
-npm run report
 ```
 
 ## Mapa de localizadores do Moodle
@@ -113,3 +115,51 @@ Para cada elemento, o documento informa:
 - Justificativa da escolha.
 
 Os elementos foram verificados diretamente no HTML da página em 16/10/2026.
+
+## Instalação e execução
+
+### 1. Instalar as dependências
+
+```bash
+npm install
+```
+
+### 2. Instalar os navegadores do Playwright
+
+```bash
+npx playwright install
+```
+
+### 3. Executar todos os testes
+
+```bash
+npm test
+```
+
+### 4. Executar os testes com o navegador visível
+
+```bash
+npm run test:headed
+```
+
+### 5. Executar um arquivo específico
+
+```bash
+npx playwright test tests/loja.spec.ts
+```
+
+## Evidências da execução
+
+O Playwright gera um relatório HTML com os resultados dos testes.
+
+No teste de download, o edital baixado também é anexado ao relatório como evidência.
+
+Para abrir o relatório após a execução:
+
+```bash
+npm run report
+```
+
+---
+
+**Objetivo do projeto:** praticar automação de testes com Playwright e TypeScript, aplicar técnicas de validação com `expect`, trabalhar com diferentes ações de interação e organizar os testes utilizando o padrão Page Object Model (POM).

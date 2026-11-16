@@ -1,26 +1,26 @@
-
-import { Page, Locator } from '@playwright/test';
+import { Page, Locator } from "@playwright/test";
 
 export class LoginPage {
-    readonly page: Page;
-    readonly campoUsuario: Locator;
-    readonly campoSenha: Locator;
-    readonly botaoLogin: Locator;
+  readonly page: Page;
+  readonly campoUsuario: Locator;
+  readonly campoSenha: Locator;
+  readonly botaoLogin: Locator;
 
-    constructor(page: Page) {
-        this.page = page;
-        this.campoUsuario = page.getByPlaceholder('Username');
-        this.campoSenha = page.getByPlaceholder('Password');
-        this.botaoLogin = page.getByRole('button', { name: 'Login' });
-    }
+  constructor(page: Page) {
+    this.page = page;
 
-    async acessar() {
-        await this.page.goto('https://www.saucedemo.com');
-    }
+    this.campoUsuario = page.getByPlaceholder("Username");
+    this.campoSenha = page.getByPlaceholder("Password");
+    this.botaoLogin = page.getByRole("button", { name: "Login" });
+  }
 
-    async login(usuario: string, senha: string) {
-        await this.campoUsuario.fill(usuario);
-        await this.campoSenha.fill(senha);
-        await this.botaoLogin.click();
-    }
+  async acessar() {
+    await this.page.goto("/");
+  }
+
+  async login(usuario: string, senha: string) {
+    await this.campoUsuario.fill(usuario);
+    await this.campoSenha.fill(senha);
+    await this.botaoLogin.click();
+  }
 }
